@@ -18,7 +18,6 @@
  http://www.yelp.com/developers/getting_started/api_access
  */
 
-
 static NSString * const kYelpConsumerKey       = @"4LMhMHz6JYcEeZI8waVkAg";
 static NSString * const kYelpConsumerSecret    = @"_o9kfSvQM_AUcTEuTYBa20yPUEg";
 static NSString * const kYelpToken             = @"-W6mM-GlhePwUdLyOsdBmmiowIeejCit";
@@ -149,7 +148,7 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 	[SVProgressHUD showWithStatus:@"Loading..." maskType:SVProgressHUDMaskTypeNone];
 	[SVProgressHUD setBackgroundColor:[UIColor redColor]];
 	
-	//[self fetchBusinessesWithQuery:<#(NSString *)#> params:<#(NSDictionary *)#>:self.searchBar.text];
+	[self fetchBusinessesWithQuery:self.searchBar.text params:nil];
 }
 
 #pragma mark - private methods

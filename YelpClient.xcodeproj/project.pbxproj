@@ -23,6 +23,7 @@
 		FADBC7DC1A8F440F00ED4054 /* FiltersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FADBC7DA1A8F440F00ED4054 /* FiltersViewController.xib */; };
 		FADBC7E01A8FC71500ED4054 /* SwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FADBC7DE1A8FC71500ED4054 /* SwitchCell.m */; };
 		FADBC7E11A8FC71500ED4054 /* SwitchCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FADBC7DF1A8FC71500ED4054 /* SwitchCell.xib */; };
+		FADBC7E41A9080EA00ED4054 /* Filters.m in Sources */ = {isa = PBXBuildFile; fileRef = FADBC7E31A9080EA00ED4054 /* Filters.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,8 @@
 		FADBC7DD1A8FC71500ED4054 /* SwitchCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwitchCell.h; sourceTree = "<group>"; };
 		FADBC7DE1A8FC71500ED4054 /* SwitchCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SwitchCell.m; sourceTree = "<group>"; };
 		FADBC7DF1A8FC71500ED4054 /* SwitchCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SwitchCell.xib; sourceTree = "<group>"; };
+		FADBC7E21A9080EA00ED4054 /* Filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filters.h; sourceTree = "<group>"; };
+		FADBC7E31A9080EA00ED4054 /* Filters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Filters.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,6 +208,8 @@
 			children = (
 				FAC657CE1A8B5BA800326070 /* Business.h */,
 				FAC657CF1A8B5BA800326070 /* Business.m */,
+				FADBC7E21A9080EA00ED4054 /* Filters.h */,
+				FADBC7E31A9080EA00ED4054 /* Filters.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -348,6 +353,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FADBC7DB1A8F440F00ED4054 /* FiltersViewController.m in Sources */,
+				FADBC7E41A9080EA00ED4054 /* Filters.m in Sources */,
 				FADBC7E01A8FC71500ED4054 /* SwitchCell.m in Sources */,
 				FAC657C61A8A7CE900326070 /* YelpClient.m in Sources */,
 				FAC657CB1A8B3BC600326070 /* YelpBusinessCell.m in Sources */,
