@@ -20,7 +20,7 @@
 @property (nonatomic, strong) NSDictionary *selectedDeal;
 @property (nonatomic, strong) NSDictionary *selectedRadius;
 @property (nonatomic, strong) Filters *filters;
-
+@property (nonatomic, strong) NSMutableArray      *sectionStatusArray;
 @end
 
 @implementation FiltersViewController
@@ -34,8 +34,14 @@
 		self.selectedRadius = [NSDictionary dictionary];
 		self.selectedDeal = [NSDictionary dictionary];
 		self.selectedSortCriteria = [NSDictionary dictionary];
+		
+		NSNumber* noObject = [NSNumber numberWithBool:NO];
+		
+		// currently, we have section of filters so far. We may need to add more.
+		self.sectionStatusArray = [[NSMutableArray alloc] initWithObjects:
+							   noObject, noObject, noObject, noObject, nil];
 	}
-	
+
 	return self;
 }
 
@@ -70,6 +76,9 @@
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Apply" style:(UIBarButtonItemStylePlain) target:self action:@selector(onApplyButton)];
 	
 	[self.tableView registerNib:[UINib nibWithNibName:@"SwitchCell" bundle:nil] forCellReuseIdentifier:@"SwitchCell"];
+	
+	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sectionHeaderTapped:)];
+	[self.tableView addGestureRecognizer:tap];
 }
 
 
@@ -82,29 +91,41 @@
 
 // creating filters for search. its a dictionary
 // 1- category_filter comma separeated codes...
-//-(NSDictionary*) filters{
-//	NSMutableDictionary* filters = [NSMutableDictionary dictionary];
-//	if(self.selectedCategories.count > 0){
-//		NSMutableArray *names = [NSMutableArray array];
-//		for(NSDictionary *category in self.selectedCategories){
-//			[names addObject:category[@"code"]];
-//		}
-//		NSString *categoryFilter = [names componentsJoinedByString:@","];
-//		[filters setObject:categoryFilter forKey:@"category_filter"];
-//	}
-//	
-//	return filters;
-//}
+-(NSDictionary*) selectedFilters{
+	NSMutableDictionary* filters = [NSMutableDictionary dictionary];
+
+	if([self.selectedSortCriteria count] > 0){
+		[filters setObject:[self.selectedSortCriteria objectForKey:@"code"] forKey:@"sort"];
+		NSLog(@" selectedSortCriteria  %@", self.selectedSortCriteria);
+	}
+	
+	if([self.selectedRadius count] > 0){
+		[filters setObject:[self.selectedRadius objectForKey:@"code"] forKey:@"radius_filter"];
+	}
+
+	if([self.selectedDeal count] > 0){
+		[filters setObject:[self.selectedDeal objectForKey:@"code"] forKey:@"deals_filter"];
+		NSLog(@" selectedDeal  %@", self.selectedDeal);
+	}
+	
+	if(self.selectedCategories.count > 0){
+		NSMutableArray *names = [NSMutableArray array];
+		for(NSDictionary *category in self.selectedCategories){
+			[names addObject:category[@"code"]];
+		}
+		NSString *categoryFilter = [names componentsJoinedByString:@","];
+		[filters setObject:categoryFilter forKey:@"category_filter"];
+	}
+	
+	return filters;
+}
 
 -(void) onCancelButton {
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void) onApplyButton {
-	//[self.delegate filtersViewController:self didChangeFilters:self.filters];
-//	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.selectedCategories];
-//	[defaults setObject:data forKey:@"selectedCategories"];
+	[self.delegate filtersViewController:self didChangeFilters:self.selectedFilters];
 	[self storeFilter:self.selectedCategories forKey:@"selectedCategories"];
 	[self storeFilter:self.selectedRadius forKey:@"selectedRadius"];
 	[self storeFilter:self.selectedDeal forKey:@"selectedDeal"];
@@ -131,12 +152,19 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+//	UITapGestureRecognizer  *headerTapped   = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sectionHeaderTapped:)];
+//	[headerView addGestureRecognizer:headerTapped];
+	
 	return [self.filters.filterKeys objectAtIndex:section];
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 	NSString *key = [self.filters.filterKeys objectAtIndex:section];
-	return [[self.filters.filterContents objectForKey:key] count];
+	if ([[self.sectionStatusArray objectAtIndex:section] boolValue]) {
+			return [[self.filters.filterContents objectForKey:key] count];
+	}
+	
+	return 1;//[[self.filters.filterContents objectForKey:key] count];
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -210,6 +238,7 @@
 		} else {
 			self.selectedSortCriteria = [NSDictionary dictionary];
 		}
+		
 		NSLog(@"selected sort looks like %@", self.selectedSortCriteria);
 	}
 	
@@ -236,5 +265,26 @@
 			self.selectedRadius = [NSDictionary dictionary];
 		}
 	}
+	[self.tableView reloadData];
 }
+
+#pragma mark - gesture tapped
+
+- (void)sectionHeaderTapped:(UITapGestureRecognizer *)gestureRecognizer{
+	CGPoint tapLocation = [gestureRecognizer locationInView:self.tableView];
+	NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:tapLocation];
+	if (indexPath.row == 0) {
+		gestureRecognizer.cancelsTouchesInView = NO;
+		NSLog(@" section index - %ld ", indexPath.section);
+		BOOL collapsed  = [[self.sectionStatusArray	objectAtIndex:indexPath.section] boolValue];
+		collapsed       = !collapsed;
+		[self.sectionStatusArray replaceObjectAtIndex:indexPath.section withObject:[NSNumber numberWithBool:collapsed]];
+		
+		//reload specific section animated
+		NSRange range   = NSMakeRange(indexPath.section, 1);
+		NSIndexSet *sectionToReload = [NSIndexSet indexSetWithIndexesInRange:range];
+		[self.tableView reloadSections:sectionToReload withRowAnimation:UITableViewRowAnimationFade];
+	}
+}
+
 @end

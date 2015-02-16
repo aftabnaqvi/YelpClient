@@ -14,7 +14,7 @@
 	self = [super init];
 	if (self) {
 		self.filterKeys = [NSMutableArray array];
-		[self.filterKeys addObject:@"Distance"];
+		[self.filterKeys addObject:@"Radius"];
 		[self.filterKeys addObject:@"Deals"];
 		[self.filterKeys addObject:@"Sort By"];
 		[self.filterKeys addObject:@"Categories"];
@@ -40,7 +40,7 @@
 }
 
 -(NSArray*) deal {
-	return @[@{@"name" : @"Offering a deal", @"code": @"0" }];
+	return @[@{@"name" : @"Offering a deal", @"code": @"1" }];
 }
 
 -(NSArray*) sort{
