@@ -20,7 +20,12 @@
 @property (nonatomic, strong) NSDictionary *selectedDeal;
 @property (nonatomic, strong) NSDictionary *selectedRadius;
 @property (nonatomic, strong) Filters *filters;
-@property (nonatomic, strong) NSMutableArray      *sectionStatusArray;
+@property(nonatomic, strong) NSMutableDictionary *sectionExpandStatus;
+
+- (BOOL)isSectionExpanded:(NSInteger)section;
+- (void)expandSection:(NSInteger)section;
+- (void)collapseSection:(NSInteger)section withRow: (NSInteger) row;
+
 @end
 
 @implementation FiltersViewController
@@ -35,18 +40,14 @@
 		self.selectedDeal = [NSDictionary dictionary];
 		self.selectedSortCriteria = [NSDictionary dictionary];
 		
-		NSNumber* noObject = [NSNumber numberWithBool:NO];
-		
-		// currently, we have section of filters so far. We may need to add more.
-		self.sectionStatusArray = [[NSMutableArray alloc] initWithObjects:
-							   noObject, noObject, noObject, noObject, nil];
+		self.sectionExpandStatus = [NSMutableDictionary dictionary];
 	}
-
+	
 	return self;
 }
 
 - (void)viewDidLoad {
-    [super viewDidLoad];
+	[super viewDidLoad];
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
 	
@@ -59,6 +60,9 @@
 	if(data != nil){
 		self.selectedRadius = data;
 	}
+	else{
+		self.selectedRadius = [self.filters.filterContents objectForKey:@"Radius"][0];
+	}
 	
 	data = [self loadFilterForKey:@"selectedDeal"];
 	if(data != nil){
@@ -68,23 +72,27 @@
 	data = [self loadFilterForKey:@"selectedSortCriteria"];
 	if(data != nil){
 		self.selectedSortCriteria = data;
+	} else {
+		NSLog(@"%@", [self.filters.filterContents objectForKey:@"Sort By"]);
+		self.selectedSortCriteria = [self.filters.filterContents objectForKey:@"Sort By"][0];
 	}
 	
-    // Do any additional setup after loading the view from its nib.
+	// Do any additional setup after loading the view from its nib.
 	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:(UIBarButtonItemStylePlain) target:self action:@selector(onCancelButton)];
 	
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Apply" style:(UIBarButtonItemStylePlain) target:self action:@selector(onApplyButton)];
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:(UIBarButtonItemStylePlain) target:self action:@selector(onApplySearch)];
+	
+	self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+	self.navigationController.navigationBar.barTintColor = [UIColor redColor];
 	
 	[self.tableView registerNib:[UINib nibWithNibName:@"SwitchCell" bundle:nil] forCellReuseIdentifier:@"SwitchCell"];
-	
-	UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sectionHeaderTapped:)];
-	[self.tableView addGestureRecognizer:tap];
+	[self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"DefaultCell"];
 }
 
 
 - (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+	[super didReceiveMemoryWarning];
+	// Dispose of any resources that can be recreated.
 }
 
 #pragma mark private methods
@@ -93,7 +101,7 @@
 // 1- category_filter comma separeated codes...
 -(NSDictionary*) selectedFilters{
 	NSMutableDictionary* filters = [NSMutableDictionary dictionary];
-
+	
 	if([self.selectedSortCriteria count] > 0){
 		[filters setObject:[self.selectedSortCriteria objectForKey:@"code"] forKey:@"sort"];
 		NSLog(@" selectedSortCriteria  %@", self.selectedSortCriteria);
@@ -102,7 +110,7 @@
 	if([self.selectedRadius count] > 0){
 		[filters setObject:[self.selectedRadius objectForKey:@"code"] forKey:@"radius_filter"];
 	}
-
+	
 	if([self.selectedDeal count] > 0){
 		[filters setObject:[self.selectedDeal objectForKey:@"code"] forKey:@"deals_filter"];
 		NSLog(@" selectedDeal  %@", self.selectedDeal);
@@ -124,7 +132,7 @@
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(void) onApplyButton {
+-(void) onApplySearch {
 	[self.delegate filtersViewController:self didChangeFilters:self.selectedFilters];
 	[self storeFilter:self.selectedCategories forKey:@"selectedCategories"];
 	[self storeFilter:self.selectedRadius forKey:@"selectedRadius"];
@@ -157,50 +165,104 @@
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 	NSString *key = [self.filters.filterKeys objectAtIndex:section];
-	if ([[self.sectionStatusArray objectAtIndex:section] boolValue]) {
-			return [[self.filters.filterContents objectForKey:key] count];
+	NSInteger expandedSectionCount = [[self.filters.filterContents objectForKey:key] count];
+	
+	if ([key isEqualToString:@"Categories"]) {
+		if ([self isSectionExpanded:section]) {
+			return expandedSectionCount;
+		} else {
+			return self.filters.filterKeys.count + 1;
+			//return knumRowsForCategories+1;
+		}
 	}
 	
-	return 1;//[[self.filters.filterContents objectForKey:key] count];
+	if ([self isSectionExpanded:section]) {
+		return expandedSectionCount;
+	} else {
+		return 1;
+	}
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-//	SwitchCell* cell = [self.tableView dequeueReusableCellWithIdentifier:@"SwitchCell"];
-//	cell.delegate = self;
-//	cell.titleLabel.text = self.categories[indexPath.row] [@"name"];
-//	cell.on = [self.selectedCategories containsObject:self.categories[indexPath.row]];
-//	return cell;
-	
 	SwitchCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SwitchCell"];
-	
 	NSString *key = [self.filters.filterKeys objectAtIndex:[indexPath section]];
 	NSArray *contents = [self.filters.filterContents objectForKey:key];
-
+	
 	cell.delegate = self;
-
+	
 	NSString* selectedFilter;
 	NSString* incomingFilter = [[contents objectAtIndex:indexPath.row] objectForKey:@"name"];
 	
+	cell.titleLabel.text = contents[indexPath.row][@"name"];
 	if ([key isEqualToString:@"Sort By"]) {
 		selectedFilter = [self.selectedSortCriteria objectForKey:@"name"];
+		cell = [tableView dequeueReusableCellWithIdentifier:@"DefaultCell"];
+		if ([self isSectionExpanded:indexPath.section]) {
+			cell.textLabel.text = contents[indexPath.row][@"name"];
+			if ([selectedFilter isEqualToString:cell.textLabel.text]) {
+				cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tick1.ico"]];
+				//cell.accessoryType = UITableViewCellAccessoryCheckmark;
+				return cell;
+			}
+			else {
+				cell.accessoryView = nil;
+				return cell;
+			}
+			
+		} else {
+			cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow-down-16.png"]];
+			
+			cell.textLabel.text = [self.selectedSortCriteria objectForKey:@"name"];
+			return cell;
+		}
 	}
-
+	
 	if ([key isEqualToString:@"Deals"]) {
 		selectedFilter = [self.selectedDeal objectForKey:@"name"];
+		cell.on = [selectedFilter isEqualToString:incomingFilter] ? YES : NO;
+		cell.titleLabel.text = contents[indexPath.row][@"name"];
+		return cell;
 	}
 	
 	if ([key isEqualToString:@"Radius"]) {
+		cell = [tableView dequeueReusableCellWithIdentifier:@"DefaultCell"];
 		selectedFilter = [self.selectedRadius objectForKey:@"name"];
+		if ([self isSectionExpanded:indexPath.section]) {
+			cell.textLabel.text = contents[indexPath.row][@"name"];
+			if ([selectedFilter isEqualToString:cell.textLabel.text]) {
+				cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tick1.ico"]];
+				//cell.accessoryType = UITableViewCellAccessoryCheckmark;
+				return cell;
+			}
+			else {
+				cell.accessoryView = nil;
+				return cell;
+			}
+			
+		} else {
+			cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"arrow-down-16.png"]];
+			
+			cell.textLabel.text = [self.selectedRadius objectForKey:@"name"];
+			return cell;
+		}
 	}
-	
-	cell.on = [selectedFilter isEqualToString:incomingFilter] ? YES : NO;
 	
 	// categories are bit different.... deal them separatly...
 	if ([key isEqualToString:@"Categories"]) {
-		cell.on = [self.selectedCategories containsObject:[contents objectAtIndex:[indexPath row]]];
+		if (indexPath.row == self.filters.filterKeys.count && ![self isSectionExpanded:indexPath.section] ) {
+			cell = [tableView dequeueReusableCellWithIdentifier:@"DefaultCell"];
+			cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Cell Expander"]];
+			cell.textLabel.text = @"Show all Categories";
+			cell.textLabel.textAlignment = NSTextAlignmentCenter;
+			//cell.textLabel.text = contents[indexPath.row][@"name"];
+			return cell;
+		} else {
+			cell.on = [self.selectedCategories containsObject:[contents objectAtIndex:[indexPath row]]];
+			cell.titleLabel.text = contents[indexPath.row][@"name"];
+			return cell;
+		}
 	}
 	
-	cell.titleLabel.text = contents[indexPath.row][@"name"];
 	return cell;
 }
 
@@ -220,6 +282,28 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:NO];
+	NSInteger section = indexPath.section;
+	NSInteger row = indexPath.row;
+	
+	switch (indexPath.section) {
+			
+		case 0:
+		case 2:
+			if ([self isSectionExpanded:section]) {
+				[self collapseSection:section withRow:row];
+			} else {
+				[self expandSection:section];
+			}
+			break;
+		case 3:
+			if (row == self.filters.filterKeys.count && ![self isSectionExpanded:section]) {
+				[self expandSection:section];
+			}
+			break;
+			
+		default:
+			break;
+	}
 }
 
 -(void)switchCell:(SwitchCell *)cell didUpdateValue:(BOOL)value{
@@ -265,23 +349,36 @@
 	[self.tableView reloadData];
 }
 
-#pragma mark - gesture tapped
-
-- (void)sectionHeaderTapped:(UITapGestureRecognizer *)gestureRecognizer{
-	CGPoint tapLocation = [gestureRecognizer locationInView:self.tableView];
-	NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:tapLocation];
-	if (indexPath.row == 0) {
-		gestureRecognizer.cancelsTouchesInView = NO;
-		NSLog(@" section index - %ld ", indexPath.section);
-		BOOL collapsed  = [[self.sectionStatusArray	objectAtIndex:indexPath.section] boolValue];
-		collapsed       = !collapsed;
-		[self.sectionStatusArray replaceObjectAtIndex:indexPath.section withObject:[NSNumber numberWithBool:collapsed]];
-		
-		//reload specific section animated
-		NSRange range   = NSMakeRange(indexPath.section, 1);
-		NSIndexSet *sectionToReload = [NSIndexSet indexSetWithIndexesInRange:range];
-		[self.tableView reloadSections:sectionToReload withRowAnimation:UITableViewRowAnimationFade];
-	}
+#pragma mark expand/collapse
+- (BOOL)isSectionExpanded:(NSInteger)section {
+	return [self.sectionExpandStatus[@(section)] boolValue];
 }
 
+- (void)expandSection:(NSInteger)section {
+	self.sectionExpandStatus[@(section)] = @YES;
+	[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)collapseSection:(NSInteger)section withRow: (NSInteger) row {
+	NSString *key = [self.filters.filterKeys objectAtIndex:section]; // key is our title
+	NSArray *contents = [self.filters.filterContents objectForKey:key];
+	
+	switch (section) {
+		case 0:
+			self.selectedRadius = [NSDictionary dictionary];
+			self.selectedRadius = [contents objectAtIndex:row];
+			break;
+			
+		case 2:
+			self.selectedSortCriteria = [NSDictionary dictionary];
+			self.selectedSortCriteria = [contents objectAtIndex:row];
+			break;
+			
+		default:
+			break;
+	}
+	
+	self.sectionExpandStatus[@(section)] = @NO;
+	[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:section] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
 @end
