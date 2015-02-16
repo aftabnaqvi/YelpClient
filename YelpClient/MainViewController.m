@@ -116,6 +116,10 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 	return size.height + 1;
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	[tableView deselectRowAtIndexPath:indexPath animated:NO];
+}
+
 #pragma mark Navigation bar customization private
 -(void) customizeNavigationBar{
 	self.searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(self.navigationItem.titleView.frame.origin.x,

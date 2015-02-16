@@ -152,9 +152,6 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-//	UITapGestureRecognizer  *headerTapped   = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sectionHeaderTapped:)];
-//	[headerView addGestureRecognizer:headerTapped];
-	
 	return [self.filters.filterKeys objectAtIndex:section];
 }
 
@@ -192,7 +189,7 @@
 		selectedFilter = [self.selectedDeal objectForKey:@"name"];
 	}
 	
-	if ([key isEqualToString:@"Distance"]) {
+	if ([key isEqualToString:@"Radius"]) {
 		selectedFilter = [self.selectedRadius objectForKey:@"name"];
 	}
 	
@@ -222,7 +219,7 @@
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	//[tableView deselectRowAtIndexPath:indexPath animated:NO];
+	[tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 -(void)switchCell:(SwitchCell *)cell didUpdateValue:(BOOL)value{
@@ -258,7 +255,7 @@
 		}
 	}
 	
-	if ([key isEqualToString:@"Distance"]) {
+	if ([key isEqualToString:@"Radius"]) {
 		if(value){
 			self.selectedRadius = [contents objectAtIndex:indexPath.row];
 		} else {

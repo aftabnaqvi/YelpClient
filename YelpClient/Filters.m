@@ -19,7 +19,6 @@
 		[self.filterKeys addObject:@"Sort By"];
 		[self.filterKeys addObject:@"Categories"];
 		
-		
 		self.filterContents = [NSMutableDictionary dictionary];
 		[self.filterContents setValue:[self radius] forKey:self.filterKeys[0]];
 		[self.filterContents setValue:[self deal] forKey:self.filterKeys[1]];
