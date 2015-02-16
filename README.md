@@ -31,3 +31,6 @@ Time spent: `<18>`
 
 ### Walkthrough
 ![Alt text](https://github.com/aftabnaqvi/YelpClient/blob/master/Yelp%20Client.gif "cc-flow.jpeg")
+
+### Demo with maps
+![Alt text](https://github.com/aftabnaqvi/YelpClient/blob/master/Yelp%20Client%20-%202.gif "cc-flow.jpeg")
