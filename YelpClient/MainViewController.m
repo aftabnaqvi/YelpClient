@@ -12,7 +12,9 @@
 #import "YelpBusinessCell.h"
 #import "SVProgressHUD.h"
 #import "FiltersViewController.h"
-
+#import "UIScrollView+SVInfiniteScrolling.h"
+#import <GoogleMaps/GoogleMaps.h>
+#import "YelpMapView.h"
 /**
  OAuth credential placeholders that must be filled by each user in regards to
  http://www.yelp.com/developers/getting_started/api_access
@@ -25,11 +27,15 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, FiltersViewControllerDelegate>
 @property (nonatomic, strong) YelpClient *client;
-@property (nonatomic, strong) NSArray *businesses;
+@property (nonatomic, strong) NSMutableArray *businesses;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UISearchBar *searchBar;
+@property (nonatomic) BOOL loadingMoreTableViewData;
+@property (nonatomic) BOOL isMapVisible;
+@property (nonatomic, strong) UIBarButtonItem *mapButton;
 
 -(void)fetchBusinessesWithQuery:(NSString*)query params:(NSDictionary*) params;
+@property (weak, nonatomic) IBOutlet YelpMapView *mapView;
 
 @end
 
@@ -38,6 +44,7 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 -(id) initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil{
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 	if(self){
+		self.businesses = [NSMutableArray array];
 		// You can register for Yelp API keys here: http://www.yelp.com/developers/manage_api_keys
 		self.client = [[YelpClient alloc] initWithConsumerKey:kYelpConsumerKey consumerSecret:kYelpConsumerSecret accessToken:kYelpToken accessSecret:kYelpTokenSecret];
 		[self fetchBusinessesWithQuery:@"Resturants" params:nil];
@@ -48,7 +55,7 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-	[self showSpinner];
+	
 	self.tableView.delegate = self;
 	self.tableView.dataSource = self;
 	self.searchBar.delegate = self;
@@ -57,6 +64,19 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 	self.tableView.rowHeight = UITableViewAutomaticDimension; // set the height of the cell using autolayout parameters (constraints, I guess.)
 	
 	[self customizeNavigationBar];
+	
+	self.mapView.hidden=true;
+}
+
+- (void)addSomeMoreEntriesToTableView {
+//	[self fetchBusinessesWithQuery:@"Resturants" params:nil];
+//	
+////	int loopTill = self.businesses.count + 20;
+////	while (self.businesses.count < loopTill) {
+////		[self.businesses addObject:[NSString stringWithFormat:@"%lu", (unsigned long)self.businesses.count]];
+////	};
+//	self.loadingMoreTableViewData = NO;
+//	//[self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -65,9 +85,18 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 }
 #pragma mark search
 -(void)fetchBusinessesWithQuery:(NSString*)query params:(NSDictionary*) params{
+	//[self showSpinner];
 	[self.client searchWithTerm:query params:params success:^(AFHTTPRequestOperation *operation,id response){
 		NSArray *businessDictionaries = response[@"businesses"];
-		self.businesses = [Business businessWithDictionaries:businessDictionaries];
+		NSLog(@"%@", response);
+		//[self.businesses  addObjectsFromArray:[Business businessWithDictionaries:businessDictionaries]];
+		self.businesses  = [Business businessWithDictionaries:businessDictionaries];
+		
+		// passing data in mapView. Find a better way though
+		self.mapView.region = response[@"region"];
+		self.mapView.businesses = self.businesses;
+		[self.mapView reloadData];
+		
 		[SVProgressHUD dismiss];
 		[self.tableView reloadData];
 	}failure:^(AFHTTPRequestOperation *operation, NSError *error){
@@ -104,6 +133,15 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
 	YelpBusinessCell *cell = [tableView dequeueReusableCellWithIdentifier:@"YelpBusinessCell"];
 	cell.business = self.businesses[indexPath.row];
+	
+	
+	// User has scrolled to the bottom of the list of available data so simulate loading some more if we aren't already
+	if (!self.loadingMoreTableViewData) {
+		self.loadingMoreTableViewData = YES;
+		[self performSelector:@selector(addSomeMoreEntriesToTableView) withObject:nil afterDelay:5.0f];
+	}
+	
+	
 	return cell;
 }
 
@@ -133,8 +171,8 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 	UIBarButtonItem *filterBarItem = [[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStylePlain target:self action:@selector(onFilterButton)];
 	self.navigationItem.leftBarButtonItem = filterBarItem;
 	
-	UIBarButtonItem *searchBarItem = [[UIBarButtonItem alloc] initWithTitle:@"Seach" style:UIBarButtonItemStylePlain target:self action:@selector(onSearchButton)];
-	self.navigationItem.rightBarButtonItem = searchBarItem;
+	self.mapButton = [[UIBarButtonItem alloc] initWithTitle:@"Map" style:UIBarButtonItemStylePlain target:self action:@selector(onMapButton)];
+	self.navigationItem.rightBarButtonItem = self.mapButton;
 	
 	self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
 	self.navigationController.navigationBar.barTintColor = [UIColor redColor];
@@ -147,12 +185,26 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 	[self presentViewController:nvc animated:YES completion:nil];
 }
 
--(void) onSearchButton{
-	[SVProgressHUD setForegroundColor:[UIColor whiteColor]];
-	[SVProgressHUD showWithStatus:@"Loading..." maskType:SVProgressHUDMaskTypeNone];
-	[SVProgressHUD setBackgroundColor:[UIColor redColor]];
-	
-	[self fetchBusinessesWithQuery:self.searchBar.text params:nil];
+-(void) onMapButton{
+	if (self.isMapVisible) {
+		// flip back to the list
+		[UIView transitionFromView:self.mapView
+							toView:self.tableView
+						  duration:1.0
+						   options:UIViewAnimationOptionTransitionFlipFromLeft|UIViewAnimationOptionShowHideTransitionViews
+						completion:nil];
+		self.mapButton.title = @"Map";
+		self.isMapVisible = NO;
+	} else {
+		// flip to the map
+		[UIView transitionFromView:self.tableView
+							toView:self.mapView
+						  duration:1.0
+						   options:UIViewAnimationOptionTransitionFlipFromRight|UIViewAnimationOptionShowHideTransitionViews
+						completion:nil];
+		self.mapButton.title = @"List";
+		self.isMapVisible = YES;
+	}
 }
 
 #pragma mark - private methods
@@ -167,5 +219,9 @@ static NSString * const kYelpTokenSecret       = @"b1RjQ94kz9rj3N7ftHfavmE8aM0";
 	[SVProgressHUD setForegroundColor:[UIColor whiteColor]];
 	[SVProgressHUD showWithStatus:@"Searching..." maskType:SVProgressHUDMaskTypeNone];
 	[SVProgressHUD setBackgroundColor:[UIColor redColor]];
+}
+
+- (void)addInfiniteScrollingWithActionHandler:(void (^)(void))actionHandler{
+	
 }
 @end

@@ -5,6 +5,8 @@ target 'YelpClient' do
 pod 'AFNetworking'
 pod 'BDBOAuth1Manager'
 pod 'SVProgressHUD'
+pod 'Google-Maps-iOS-SDK'
+pod 'SVPullToRefresh'
 end
 
 target 'YelpClientTests' do

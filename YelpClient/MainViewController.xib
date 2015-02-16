@@ -6,6 +6,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MainViewController">
             <connections>
+                <outlet property="mapView" destination="pfb-bL-Lpk" id="0LU-jN-3t1"/>
                 <outlet property="tableView" destination="wrX-0U-Myx" id="wN2-Dm-gGt"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -19,13 +20,21 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </tableView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pfb-bL-Lpk" customClass="YelpMapView">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="wrX-0U-Myx" secondAttribute="trailing" id="1Sc-Aj-hmx"/>
+                <constraint firstAttribute="bottom" secondItem="pfb-bL-Lpk" secondAttribute="bottom" id="Tkl-dv-chY"/>
+                <constraint firstItem="pfb-bL-Lpk" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="XxN-ES-odv"/>
+                <constraint firstAttribute="trailing" secondItem="pfb-bL-Lpk" secondAttribute="trailing" id="hkc-QE-ZZA"/>
                 <constraint firstItem="wrX-0U-Myx" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="hlE-Tm-hlS"/>
                 <constraint firstItem="wrX-0U-Myx" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="n3G-nU-ryx"/>
                 <constraint firstAttribute="bottom" secondItem="wrX-0U-Myx" secondAttribute="bottom" id="wKX-vr-2Xb"/>
+                <constraint firstItem="pfb-bL-Lpk" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="xIM-hw-ERG"/>
             </constraints>
             <point key="canvasLocation" x="340" y="390"/>
         </view>

@@ -8,6 +8,9 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
+#import <GoogleMaps/GoogleMaps.h>
+
+NSString * const kGMSApiKey = @"AIzaSyDdP3mlJ_x7ddQz_GjYve-ZiyUmNK30Z-0";
 
 @interface AppDelegate ()
 
@@ -17,6 +20,10 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+	
+	// init google maps api
+	[GMSServices provideAPIKey:kGMSApiKey];
+	
 	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	
 	self.window.rootViewController = [[UINavigationController alloc] initWithRootViewController:[[MainViewController alloc] init]];

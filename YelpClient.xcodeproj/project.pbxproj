@@ -23,6 +23,7 @@
 		FAD03D991A91BB2A009DB101 /* tick.ico in Resources */ = {isa = PBXBuildFile; fileRef = FAD03D981A91BB2A009DB101 /* tick.ico */; };
 		FAD03D9B1A91BC2D009DB101 /* tick1.ico in Resources */ = {isa = PBXBuildFile; fileRef = FAD03D9A1A91BC2D009DB101 /* tick1.ico */; };
 		FAD03D9D1A91BC77009DB101 /* arrow-down-16.png in Resources */ = {isa = PBXBuildFile; fileRef = FAD03D9C1A91BC77009DB101 /* arrow-down-16.png */; };
+		FAD03DA01A91C594009DB101 /* YelpMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = FAD03D9F1A91C594009DB101 /* YelpMapView.m */; };
 		FADBC7DB1A8F440F00ED4054 /* FiltersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FADBC7D91A8F440F00ED4054 /* FiltersViewController.m */; };
 		FADBC7DC1A8F440F00ED4054 /* FiltersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = FADBC7DA1A8F440F00ED4054 /* FiltersViewController.xib */; };
 		FADBC7E01A8FC71500ED4054 /* SwitchCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FADBC7DE1A8FC71500ED4054 /* SwitchCell.m */; };
@@ -68,6 +69,8 @@
 		FAD03D981A91BB2A009DB101 /* tick.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = tick.ico; sourceTree = "<group>"; };
 		FAD03D9A1A91BC2D009DB101 /* tick1.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = tick1.ico; sourceTree = "<group>"; };
 		FAD03D9C1A91BC77009DB101 /* arrow-down-16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow-down-16.png"; sourceTree = "<group>"; };
+		FAD03D9E1A91C594009DB101 /* YelpMapView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YelpMapView.h; sourceTree = "<group>"; };
+		FAD03D9F1A91C594009DB101 /* YelpMapView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YelpMapView.m; sourceTree = "<group>"; };
 		FADBC7D81A8F440F00ED4054 /* FiltersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FiltersViewController.h; sourceTree = "<group>"; };
 		FADBC7D91A8F440F00ED4054 /* FiltersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FiltersViewController.m; sourceTree = "<group>"; };
 		FADBC7DA1A8F440F00ED4054 /* FiltersViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FiltersViewController.xib; sourceTree = "<group>"; };
@@ -211,6 +214,8 @@
 				FADBC7DD1A8FC71500ED4054 /* SwitchCell.h */,
 				FADBC7DE1A8FC71500ED4054 /* SwitchCell.m */,
 				FADBC7DF1A8FC71500ED4054 /* SwitchCell.xib */,
+				FAD03D9E1A91C594009DB101 /* YelpMapView.h */,
+				FAD03D9F1A91C594009DB101 /* YelpMapView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -377,6 +382,7 @@
 				FAC657D01A8B5BA800326070 /* Business.m in Sources */,
 				FAC657C11A8A7C0A00326070 /* MainViewController.m in Sources */,
 				FAC6579A1A8A780900326070 /* main.m in Sources */,
+				FAD03DA01A91C594009DB101 /* YelpMapView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -491,6 +497,7 @@
 			baseConfigurationReference = 4016BA5978C005A3615AF966 /* Pods-YelpClient.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = YelpClient/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -503,6 +510,7 @@
 			baseConfigurationReference = 14C974EDFA0AFAB13068B8D6 /* Pods-YelpClient.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = YelpClient/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

@@ -18,6 +18,6 @@
 @property (nonatomic, strong) NSString *categories;
 @property (nonatomic, assign) CGFloat distance;
 
-+ (NSArray*) businessWithDictionaries:(NSArray *)dictionaries;
++ (NSMutableArray*) businessWithDictionaries:(NSArray *)dictionaries;
 
 @end

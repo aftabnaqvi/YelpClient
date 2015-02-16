@@ -15,12 +15,12 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Restaurant Name" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="218" translatesAutoresizingMaskIntoConstraints="NO" id="yPb-Q9-UoZ">
-                        <rect key="frame" x="90" y="8" width="179" height="20"/>
+                        <rect key="frame" x="90" y="8" width="179" height="19.5"/>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="# Reviews" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bfN-SB-tbP">
-                        <rect key="frame" x="177" y="30" width="97" height="17"/>
+                        <rect key="frame" x="177" y="29" width="97" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="97" id="GVb-9Q-L7I"/>
                             <constraint firstAttribute="height" constant="17" id="iMG-f7-IVZ"/>
@@ -30,19 +30,19 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="Address" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hFt-ls-jfk">
-                        <rect key="frame" x="90" y="52" width="214" height="15"/>
+                        <rect key="frame" x="90" y="51" width="214" height="14.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="De6-Y7-5co">
-                        <rect key="frame" x="90" y="32" width="84" height="17"/>
+                        <rect key="frame" x="90" y="31" width="84" height="17"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="17" id="DRZ-rq-0Wy"/>
                             <constraint firstAttribute="width" constant="84" id="Kyh-Vj-KEp"/>
                         </constraints>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Categories" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mfi-ti-PaR">
-                        <rect key="frame" x="90" y="67" width="214" height="15"/>
+                        <rect key="frame" x="90" y="66" width="214" height="14.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>

@@ -14,7 +14,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-YelpClient-Google-Maps-iOS-SDK.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-YelpClient-SVProgressHUD.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-YelpClient-SVPullToRefresh.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -27,22 +37,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>2293A741D9F7BD7725776B8B</key>
+		<key>053A4F77A4745614A0AEB5B2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5B13D16686199E70FB90C033</key>
+		<key>170620BAB671676F6D2E9EDA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B2976E96FC2D83DA8B7CD023</key>
+		<key>212B73011563401EB321484D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>BDD701DF841AC6914A235D21</key>
+		<key>76B4738C8740BB178EEA16E8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7AED488DEB127BF2FB355C1D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DB5987E00521CC092318F3DF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
