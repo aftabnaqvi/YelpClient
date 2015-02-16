@@ -30,6 +30,4 @@ Time spent: `<18>`
 - [ ] Implement the restaurant detail page.
 
 ### Walkthrough
-
-![Video Walkthrough]
 ![Alt text](https://github.com/aftabnaqvi/YelpClient/blob/master/Yelp%20Client.gif "cc-flow.jpeg")
